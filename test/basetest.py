@@ -15,6 +15,7 @@ table = Table('testtable', metadata,
         Column('test', Unicode),
         Column('test2', Unicode))
 
+table.drop(checkfirst=True)
 table.create(checkfirst=True)
 
 for i in range(20):
@@ -22,6 +23,15 @@ for i in range(20):
 
 print(engine.execute(testmodule.pyconcat(table.c.test, table.c.test2)).fetchall())
 
+statement = """
+CREATE TRIGGER mytrigger
+BEFORE INSERT
+ON %s
+FOR EACH ROW EXECUTE PROCEDURE %s();
+"""
 
+engine.execute(statement % (table.name, testmodule.nullifying_trigger.__name__))
 
-print(engine.execute(testmodule.pygreatest(1, 3)).fetchone())
+table.insert({'test': 'grou', 'test2': 'grou'}).execute()
+
+print(engine.execute(testmodule.pyconcat(table.c.test, table.c.test2)).fetchall());

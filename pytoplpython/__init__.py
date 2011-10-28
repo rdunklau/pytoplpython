@@ -1,11 +1,9 @@
 from importlib.abc import InspectLoader
-from importlib.machinery import PathFinder
 import imp
 import sys
 import ast
 from .unparse import Unparser
 from io import StringIO
-from code import compile_command
 from tempfile import NamedTemporaryFile
 
 def postgresql_function(function):

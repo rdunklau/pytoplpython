@@ -15,15 +15,20 @@ class CreateFunction(DDLElement):
         self.args_definition = args_definition
         self.code = code
 
+def process_type(compiler, argtype):
+    if isinstance(argtype, str):
+        return argtype
+    else:
+        return compiler.dialect.type_compiler.process(argtype)
+
 @compiles(CreateFunction, 'postgresql')
 def visit_create_function(element, compiler, **kw):
     code = 'create or replace function %s (' % element.name
     args = []
-    type_compiler = compiler.dialect.type_compiler
     for arg, argtype in element.args_definition:
-        args.append('%s %s' % (arg, type_compiler.process(argtype)))
+        args.append('%s %s' % (arg, process_type(compiler, argtype)))
     code += ', '.join(args)
-    code += ' ) RETURNS %s' % (type_compiler.process(element.return_type))
+    code += ' ) RETURNS %s' % (process_type(compiler, element.return_type))
     code += ' AS $$\n'
     code += element.code
     code += '$$ language plpythonu;'
@@ -268,11 +273,12 @@ class Unparser:
     def _get_type(self, python_type):
         # TODO: use sqlalchemy to return that
         name = python_type.id.split('.')[-1]
-        try:
-            return getattr(types, name)()
-        except AttributeError:
-            raise AttributeError('%s is not a sqlalchemy type (at line %s)'
-                    % (name, python_type.lineno))
+        type = getattr(types, name, None)
+        if type is None:
+            type = name
+        else:
+            type = type()
+        return type
 
 
     def _FunctionDef(self, t):
