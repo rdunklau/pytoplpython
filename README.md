@@ -40,4 +40,4 @@ mymodule = loader.load_module('mymodule')
 engine.execute(testmodule.greatest(1, 3)).fetchone()
 ```
 
-See the [test/basetest.py](http://github.com/rdunklau/pytoplpython/test/basetest.py) and [test/testmodule.py](http://github.com/rdunklau/pytoplpython/test/testmodule.py) files for additional information
+See the [test/basetest.py](http://github.com/rdunklau/pytoplpython/tree/master/test/basetest.py) and [test/testmodule.py](http://github.com/rdunklau/pytoplpython/tree/master/test/testmodule.py) files for additional information
