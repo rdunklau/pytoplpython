@@ -35,6 +35,7 @@ engine = create_engine('postgresql://python@localhost/')
 # Create the loader, and load the module containing the functions
 # This will create the associated pl/python functions, and replace them 
 # with sqlalchemy functions, which can operate on columns
+loader = PostgresLoader(engine)
 mymodule = loader.load_module('mymodule')
 
 engine.execute(testmodule.greatest(1, 3)).fetchone()
